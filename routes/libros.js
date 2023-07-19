@@ -4,8 +4,10 @@ const libros = require('../data');
 const Joi = require('joi');
 const libroSchema = Joi.object({
     titulo: Joi.string().required().label('Título'),
-    autor: Joi.string().required().label('Autor')
+    autor: Joi.string().required().label('Autor'),
+    edicion: Joi.number().required().label('Edición')
     });
+
     // Obtener todos los libros
     router.get('/', (req, res, next) => {
     try {
@@ -14,6 +16,8 @@ const libroSchema = Joi.object({
     next(err);
     }
     });
+
+
     // Obtener un libro por ID
     router.get('/:id', (req, res, next) => {
     try {
@@ -29,6 +33,8 @@ const libroSchema = Joi.object({
     next(err);
     }
     });
+
+
     // Crear un nuevo libro
     router.post('/', (req, res, next) => {
     try {
@@ -40,11 +46,12 @@ const libroSchema = Joi.object({
     detail.message);
     throw validationError;
     }
-    const { titulo, autor } = value;
+    const { titulo, autor, edicion } = value;
 const nuevoLibro = {
 id: libros.length + 1,
 titulo,
-autor
+autor,
+edicion
 };
 libros.push(nuevoLibro);
 res.status(201).json(nuevoLibro);
@@ -52,6 +59,8 @@ res.status(201).json(nuevoLibro);
 next(err);
 }
 });
+
+
 // Actualizar un libro existente
 router.put('/:id', (req, res, next) => {
 try {
@@ -64,7 +73,7 @@ validationError.details = error.details.map(detail =>
 detail.message);
 throw validationError;
 }
-const { titulo, autor } = value;
+const { titulo, autor, edicion } = value;
 const libro = libros.find((l) => l.id === id);
 if (!libro) {
 const error = new Error('Libro no encontrado');
@@ -73,10 +82,13 @@ throw error;
 }
 libro.titulo = titulo || libro.titulo;
 libro.autor = autor || libro.autor;
+libro.edicion = edicion || libro.edicion;
 res.json(libro);
 } catch (err) {
 }
 });
+
+
 // Eliminar un libro
 router.delete('/:id', (req, res, next) => {
 try {
